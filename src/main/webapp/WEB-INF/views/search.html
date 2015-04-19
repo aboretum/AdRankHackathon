@@ -31,7 +31,7 @@ function SearchYouTube(query) {
             document.getElementById("search-results-block").innerHTML = row;
         },
         error: function () {
-            alert("Videos cannot be downloaded and played");
+            alert("Error loading youtube video results");
         }
     });
     return false;
@@ -70,8 +70,16 @@ function SearchYouTube(query) {
 						</a>
 						</li>
 
+						<li><a href="recently-searched.html">
+							Recently Searched
+						</a></li>
+
 						<li><a href="login.html">
 							Logout
+						</a></li>
+
+						<li><a href="about-us-loggedin.html">
+							About Us
 						</a></li>
 					</ul>
 				</div><!-- /.nav-collapse -->
@@ -82,15 +90,16 @@ function SearchYouTube(query) {
 	<br/>
 	<br/>
 	<br/>
-	<div class="module-head">
-		<h4>Search:</h4>
+	<div style="margin-left:8px;" class="module-head">
+		<h4>Search</h4>
 	</div>
-	<div>
+	<div style="margin-left:8px;">
 		<input type="text" id="queryinput" />
+		<br/>
 		<input type="submit" value="Search" class="btn btn-primary" onclick="javascript:SearchYouTube(document.getElementById('queryinput').value)" />
 	</div>
 	<br/>
-	<div class="module-head">
+	<div style="margin-left:8px;" class="module-head">
 		<h4>Results</h4>
 	</div>
 	<div id="search-results-block"></div>

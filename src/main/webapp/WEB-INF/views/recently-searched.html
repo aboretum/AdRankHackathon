@@ -10,7 +10,7 @@
 	<link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet">
 	<link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'>
 </head>
-<body>
+<body onload="javascript:populateFrequentUsers();">
 
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
@@ -27,20 +27,12 @@
 				
 					<ul class="nav pull-right">
 
-						<li><a href="frequent-users.html">
-							Most Frequent Users
-						</a></li>
+
+						<!-- <li><a><strong>Most Frequent Users<strong></a>
+						</li> -->
 
 						<li><a href="login.html">
-							Login
-						</a></li>
-
-						<li><a href="signup.html">
-							Sign Up
-						</a></li>
-
-						<li><a href="forgot-password.html">
-							<strong>Forgot your password?</strong>
+							Back to Main Page
 						</a></li>
 
 						<li><a href="about-us-not-loggedin.html">
@@ -53,34 +45,31 @@
 	</div><!-- /navbar -->
 
 
+	<div class="wrapper">
+		<div class="container">
+			<div class="module-head">
+				<h4>Recently Searched:</h4>
+			</div>
+		</div>
+
+	</div>
+
 
 	<div class="wrapper">
 		<div class="container">
 			<div class="row">
-				<div class="module module-login span4 offset4">
-					<form class="form-vertical">
+				<div class="module module-login span4 ">
 						<br/>
 						<br/>
 						<br/>
 						<br/>
 						<div class="module-head">
-							<h4>Forgot Password</h4>
+							<h4>Recently Searched :</h4>
 						</div>
-						<div class="module-body">
-							<div class="control-group">
-								<div class="controls row-fluid">
-									<input class="span12" type="text" id="inputEmail" placeholder="Enter Email">
-								</div>
-							</div>
-						</div>
-						<div class="module-foot">
-							<div class="control-group">
-								<div class="controls clearfix">
-									<button id = "submitForgot" type="submit" onclick="javascript:forgotPassword();" class="btn btn-primary pull-right">Submit</button>
-								</div>
-							</div>
-						</div>
-					</form>
+
+						 <ul id = "recentlySearched"  class="list-group">
+						   
+						</ul>
 				</div>
 			</div>
 		</div>
