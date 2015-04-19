@@ -10,7 +10,7 @@
 	<link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet">
 	<link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'>
 </head>
-<body onload="javascript:populateFrequentUsers();">
+<body onload="javascript:populateRecentlySearched();">
 
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
@@ -31,7 +31,7 @@
 						<!-- <li><a><strong>Most Frequent Users<strong></a>
 						</li> -->
 
-						<li><a href="login.html">
+						<li><a href="search.html">
 							Back to Main Page
 						</a></li>
 
@@ -44,7 +44,9 @@
 		</div><!-- /navbar-inner -->
 	</div><!-- /navbar -->
 
-
+	<br/>
+	<br/>
+	<br/>
 	<div class="wrapper">
 		<div class="container">
 			<div class="module-head">
@@ -55,25 +57,7 @@
 	</div>
 
 
-	<div class="wrapper">
-		<div class="container">
-			<div class="row">
-				<div class="module module-login span4 ">
-						<br/>
-						<br/>
-						<br/>
-						<br/>
-						<div class="module-head">
-							<h4>Recently Searched :</h4>
-						</div>
-
-						 <ul id = "recentlySearched"  class="list-group">
-						   
-						</ul>
-				</div>
-			</div>
-		</div>
-	</div><!--/.wrapper-->
+	<div id="recently-searched-block"></div>
 
 	<!-- <div class="footer">
 		<div class="container">
