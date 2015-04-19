@@ -35,9 +35,7 @@ public class SearchUnit {
 	
 	private static YouTube youtube;
 	
-	private List<Video> videos;
-	
-    public static void getVideos() {
+    public static List<SearchResult> getVideos(String queryTerm) {
         // Read the developer key from the properties file.
         Properties properties = new Properties();
         try {
@@ -63,7 +61,7 @@ public class SearchUnit {
             }).setApplicationName("AdRankHackathon").build();
 
             // Prompt the user to enter a query term.
-            String queryTerm = "Golf";
+            //queryTerm = "Golf";
 
             // Define the API request for retrieving search results.
             YouTube.Search.List search = youtube.search().list("id,snippet");
@@ -89,6 +87,7 @@ public class SearchUnit {
             List<SearchResult> searchResultList = searchResponse.getItems();
             if (searchResultList != null) {
                 prettyPrint(searchResultList.iterator(), queryTerm);
+                return searchResultList;
             }
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
@@ -98,6 +97,8 @@ public class SearchUnit {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+        
+        return null;
     }
     
     private static void prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query) {
@@ -120,7 +121,7 @@ public class SearchUnit {
             // item will not contain a video ID.
             if (rId.getKind().equals("youtube#video")) {
                 Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault();
-
+             
                 System.out.println(" Video Id" + rId.getVideoId());
                 System.out.println(" Title: " + singleVideo.getSnippet().getTitle());
                 System.out.println(" Thumbnail: " + thumbnail.getUrl());

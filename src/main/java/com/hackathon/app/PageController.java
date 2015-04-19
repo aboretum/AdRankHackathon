@@ -1,7 +1,9 @@
 package com.hackathon.app;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Thumbnail;
+import com.hackathon.bean.Video;
+import com.hackathon.util.SearchUnit;
 
 /**
  * An mash-up of controller methods that handle requests for different
@@ -39,7 +46,7 @@ public class PageController {
 		return "index";
 	}
 	
-	@RequestMapping(value = "/SearchKeyWord", method = RequestMethod.GET)
+	@RequestMapping(value = "/SearchKeyWord", method = RequestMethod.POST)
 	public String searchKeyword(Locale locale, Model model, HttpServletRequest request) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		String keyWord = request.getParameter("keyword");
@@ -51,6 +58,21 @@ public class PageController {
 		String formattedDate = dateFormat.format(date);
 		
 		model.addAttribute("serverTime", formattedDate );
+		List<SearchResult> searchResultList = SearchUnit.getVideos(keyWord);
+		
+		List<Video> videoList =new ArrayList<Video>();
+		for(SearchResult sr: searchResultList){
+			String video_title = sr.getSnippet().getTitle();
+			String video_etag = sr.getId().getVideoId();
+			System.out.println(video_etag);
+			Thumbnail thumbnail = sr.getSnippet().getThumbnails().getDefault();
+			Video video = new Video();
+			video.setTitle(video_title);
+			video.setUrl(video_etag);
+			videoList.add(video);
+		}
+		
+		model.addAttribute("videoList", videoList);
 		
 		return "index";
 	}

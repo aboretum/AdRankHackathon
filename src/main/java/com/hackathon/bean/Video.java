@@ -1,6 +1,7 @@
 package com.hackathon.bean;
 
 public class Video {
+	private String title;
 	private String url;
 	private String views_per_day;
 	private String category;
@@ -35,6 +36,12 @@ public class Video {
 	}
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	
