@@ -29,7 +29,7 @@
 				
 					<ul class="nav pull-right">
 
-						<li><a href="#">
+						<li><a href="/app/Signup">
 							Sign Up
 						</a></li>
 
@@ -57,12 +57,12 @@
 						<div class="module-body">
 							<div class="control-group">
 								<div class="controls row-fluid">
-									<input class="span12" type="text" id="inputEmail" placeholder="Email">
+									<input class="span12" type="text" id="inputEmail" name="email" placeholder="Email">
 								</div>
 							</div>
 							<div class="control-group">
 								<div class="controls row-fluid">
-									<input class="span12" type="password" id="inputPassword" placeholder="Password">
+									<input class="span12" type="password" id="inputPassword" name="password" placeholder="Password">
 								</div>
 							</div>
 						</div>

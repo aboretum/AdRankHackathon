@@ -15,9 +15,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Thumbnail;
-import com.hackathon.bean.Video;
+import com.hackathon.bean.AdVideo;
+import com.hackathon.bean.Search;
+import com.hackathon.bean.User;
+import com.hackathon.dao.SearchDao;
+import com.hackathon.dao.UserDao;
+import com.hackathon.dao.VideoDao;
 import com.hackathon.util.SearchUnit;
 
 /**
@@ -28,29 +34,137 @@ import com.hackathon.util.SearchUnit;
 public class PageController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PageController.class);
-	
+	private UserDao userDao = new UserDao();
+	private VideoDao videoDao = new VideoDao();
+	private SearchDao searchDao = new SearchDao();
 	/**
 	 * Processing the user input for credentials to authenticate the user.
 	 */
 	@RequestMapping(value = "/Signup", method = RequestMethod.GET)
 	public String Signup(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
 		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		
-		String formattedDate = dateFormat.format(date);
+		return "sign-up";
+	}
+	
+	@RequestMapping(value = "/Main", method = RequestMethod.GET)
+	public String main(Locale locale, Model model) {
 		
-		model.addAttribute("serverTime", formattedDate );
 		
 		return "index";
 	}
+	
+	
 	
 	@RequestMapping(value = "/SearchKeyWord", method = RequestMethod.POST)
 	public String searchKeyword(Locale locale, Model model, HttpServletRequest request) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		String keyWord = request.getParameter("keyword");
 		
+		User user = new User();
+		user.setUserName("Nacho");
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		List<Video> searchVideoList = SearchUnit.getVideos(keyWord);
+		
+		List<AdVideo> videoList =new ArrayList<AdVideo>();
+		if(searchVideoList!=null){
+			
+		
+		for(Video vdo: searchVideoList){
+			
+			String video_title = vdo.getSnippet().getTitle();
+			String video_id = vdo.getId();
+			
+			Thumbnail thumbnail = vdo.getSnippet().getThumbnails().getDefault();
+			AdVideo video = new AdVideo();
+			video.setTitle(video_title);
+			video.setUrl(video_id);
+			video.setAuthor(vdo.getSnippet().getChannelTitle());
+			video.setTotal_views(vdo.getStatistics().getViewCount().toString());
+			Date vdate = new Date(vdo.getSnippet().getPublishedAt().getValue());
+		
+			video.setPublishDate(vdate);
+			video.setThumb_url(thumbnail.getUrl());
+			video.setCategory(vdo.getSnippet().getCategoryId());
+			video.setDescription(vdo.getSnippet().getDescription());
+			videoList.add(video);
+			
+			//System.out.println(vdate);
+			//System.out.println(video.getThumb_url());
+		}
+		
+		}
+		
+		searchDao.insertRecentSearch(user, videoList);
+		searchDao.insertRecentKeyWord(keyWord);
+		
+		
+		model.addAttribute("videoList", videoList);
+		
+		return "index";
+	}
+	
+	@RequestMapping(value = "/SortBySpecifics", method = RequestMethod.GET)
+	public String sortVideoList(Locale locale, Model model, HttpServletRequest request) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		String orderSpecifics = request.getParameter("orderSpecifics");
+		
+		User user = new User();
+		user.setUserName("Nacho");
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		
+		List<AdVideo> videoList = searchDao.getVideoListBySpecifics(user, orderSpecifics);
+		if(videoList!=null){
+			
+			model.addAttribute("videoList", videoList);
+
+		}
+		
+		
+		return "index";
+	}
+	
+	@RequestMapping(value = "/RecentSearch", method = RequestMethod.GET)
+	public String showRecentSearch(Locale locale, Model model, HttpServletRequest request) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		User user = new User();
+		user.setUserName("Nacho");
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		List<Search> searchList = searchDao.getSearchListWithFrequency();
+		
+		
+		if(searchList!=null){
+			for(Search srch:searchList){
+				System.out.println(srch.getSearchFrequency());
+			}
+			model.addAttribute("searchList", searchList);
+
+		}
+		
+		return "recent-search";
+	}
+	
+	@RequestMapping(value = "/FrequentUsers", method = RequestMethod.GET)
+	public String showFrequentUsers(Locale locale, Model model, HttpServletRequest request) {
+		logger.info("Welcome home! The client locale is {}.", locale);
 		
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -58,24 +172,16 @@ public class PageController {
 		String formattedDate = dateFormat.format(date);
 		
 		model.addAttribute("serverTime", formattedDate );
-		List<SearchResult> searchResultList = SearchUnit.getVideos(keyWord);
 		
-		List<Video> videoList =new ArrayList<Video>();
-		for(SearchResult sr: searchResultList){
-			String video_title = sr.getSnippet().getTitle();
-			String video_etag = sr.getId().getVideoId();
-			System.out.println(video_etag);
-			Thumbnail thumbnail = sr.getSnippet().getThumbnails().getDefault();
-			Video video = new Video();
-			video.setTitle(video_title);
-			video.setUrl(video_etag);
-			videoList.add(video);
+		List<User> userList = userDao.getFrequentUsers();
+		
+		if(userList!=null){
+			model.addAttribute("userList", userList);
 		}
-		
-		model.addAttribute("videoList", videoList);
-		
-		return "index";
+		return "frequent-users";
 	}
+	
+	
 	
 	
 }

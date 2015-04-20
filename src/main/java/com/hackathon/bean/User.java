@@ -10,6 +10,7 @@ public class User {
 	private String passWord;
 	private String userEmail;
 	private String userAvatar;
+	private int loginFrequency;
 	
 	public User(){
 		
@@ -49,6 +50,14 @@ public class User {
 
 	public void setUserAvatar(String userAvatar) {
 		this.userAvatar = userAvatar;
+	}
+
+	public int getLoginFrequency() {
+		return loginFrequency;
+	}
+
+	public void setLoginFrequency(int loginFrequency) {
+		this.loginFrequency = loginFrequency;
 	}
 	
 }

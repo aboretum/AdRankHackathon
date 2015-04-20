@@ -1,6 +1,12 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
+	
     if($('.datatable-1').length>0){
-        $('.datatable-1').dataTable();
+        $('.datatable-1').dataTable(
+           {
+              "aaSorting": []
+           }
+         );
+        
         $('.dataTables_paginate').addClass('btn-group datatable-pagination');
         $('.dataTables_paginate > a').wrapInner('<span />');
         $('.dataTables_paginate > a:first-child').append('<i class="icon-chevron-left shaded"></i>');
@@ -21,12 +27,11 @@
 
     //Graph/Chart index.html
 
-    var d1 = [ [0, 2], [1, 14], [2, 5], [3, 4], [4, 5], [5, 1], [6, 14], [7, 5],  [8, 5] ];
+    var d1 = [ [0, 1], [1, 14], [2, 5], [3, 4], [4, 5], [5, 1], [6, 14], [7, 5],  [8, 5] ];
     var d2 = [ [0, 5], [1, 2], [2, 10], [3, 1], [4, 9],  [5, 5], [6, 2], [7, 10], [8, 8] ];
-    var d3 = [ [0, 3], [1, 6], [2, 6], [3, 14], [4, 5],  [5, 8], [6, 2], [7, 7], [8, 6] ];
 
 		var plot = $.plot($('#placeholder2'),
-			   [ { data: d1, label: 'Profits'}, { data: d2, label: 'Expenses' }, { data: d3, label: 'Stuff' } ], {
+			   [ { data: d1, label: 'Profits'}, { data: d2, label: 'Expenses' } ], {
 					lines: {
 						show: true,
 						fill: true, /*SWITCHED*/
@@ -115,8 +120,7 @@
 
         var d1 = [ [0, 1], [1, 14], [2, 5], [3, 4], [4, 5], [5, 1], [6, 14], [7, 5],  [8, 5] ];
 		var d2 = [ [0, 5], [1, 2], [2, 10], [3, 1], [4, 9],  [5, 5], [6, 2], [7, 10], [8, 8] ];
-		var d3 = [ [0, 3], [1, 6], [2, 6], [3, 14], [4, 5],  [5, 8], [6, 2], [7, 7], [8, 6] ];
-		
+
 		var plot = $.plot($("#placeholder2"),
 			   [ { data: d1, label: "Data Y"}, { data: d2, label: "Data X" } ], {
 					lines: { 

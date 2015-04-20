@@ -2,12 +2,10 @@ package com.hackathon.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTube.Search;
@@ -24,6 +22,9 @@ import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Thumbnail;
+import com.google.api.services.youtube.model.ThumbnailDetails;
+import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.VideoSnippet;
 
 
 
@@ -35,7 +36,7 @@ public class SearchUnit {
 	
 	private static YouTube youtube;
 	
-    public static List<SearchResult> getVideos(String queryTerm) {
+    public static List<Video> getVideos(String queryTerm) {
         // Read the developer key from the properties file.
         Properties properties = new Properties();
         try {
@@ -86,8 +87,8 @@ public class SearchUnit {
             SearchListResponse searchResponse = search.execute();
             List<SearchResult> searchResultList = searchResponse.getItems();
             if (searchResultList != null) {
-                prettyPrint(searchResultList.iterator(), queryTerm);
-                return searchResultList;
+                List<Video> videoList = prettyPrint(searchResultList.iterator(), queryTerm, apiKey);
+                return videoList;
             }
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
@@ -101,8 +102,8 @@ public class SearchUnit {
         return null;
     }
     
-    private static void prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query) {
-
+    private static List<Video> prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query, String apiKey) {
+    	List<Video> videoList = new ArrayList<Video>();
         System.out.println("\n=============================================================");
         System.out.println(
                 "   First " + NUMBER_OF_VIDEOS_RETURNED + " videos for search on \"" + query + "\".");
@@ -116,18 +117,58 @@ public class SearchUnit {
 
             SearchResult singleVideo = iteratorSearchResults.next();
             ResourceId rId = singleVideo.getId();
-
+            try{
+            	YouTube.Videos.List video = youtube.videos().list("id, snippet, contentDetails, statistics");
+            	video.setKey(apiKey);
+            	video.setId(singleVideo.getId().getVideoId());
+            	video.setFields("items(snippet/channelTitle, snippet/description, snippet/publishedAt, snippet/categoryId, contentDetails/duration, statistics/viewCount)");
+            	VideoListResponse videoResponse = video.execute();
+            	List<Video> videoResultList = videoResponse.getItems();
+            	if(videoResultList!=null){
+            		Video v = videoResultList.get(0);
+            		v.setId(rId.getVideoId());
+            		
+            		System.out.println(v.getContentDetails().getDuration());
+            		System.out.println(v.getStatistics().getViewCount());
+            		System.out.println(v.getSnippet().getChannelTitle());
+            		System.out.println(v.getSnippet().getCategoryId());
+            		System.out.println(v.getSnippet().getDescription());
+            		System.out.println(v.getSnippet().getPublishedAt());
+            		
+            		ThumbnailDetails thumbnails = new ThumbnailDetails();
+            		thumbnails.setDefault(singleVideo.getSnippet().getThumbnails().getDefault());
+				
+					v.getSnippet().setThumbnails(thumbnails);
+					v.getSnippet().setTitle(singleVideo.getSnippet().getTitle());
+					
+            		
+            		
+            		videoList.add(videoResultList.get(0));
+            		
+            	}
+            }catch (GoogleJsonResponseException e) {
+                System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
+                        + e.getDetails().getMessage());
+            } catch (IOException e) {
+                System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            
             // Confirm that the result represents a video. Otherwise, the
             // item will not contain a video ID.
             if (rId.getKind().equals("youtube#video")) {
                 Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault();
-             
+                
                 System.out.println(" Video Id" + rId.getVideoId());
                 System.out.println(" Title: " + singleVideo.getSnippet().getTitle());
                 System.out.println(" Thumbnail: " + thumbnail.getUrl());
+                
                 System.out.println("\n-------------------------------------------------------------\n");
             }
         }
+        
+        return videoList;
     }
    
 }
